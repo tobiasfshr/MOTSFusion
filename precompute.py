@@ -122,14 +122,14 @@ if __name__ == '__main__':
     parser.add_argument('-compute_seg', help='compute segmentations', dest='compute_seg',
                         type=bool, default=True)
     parser.add_argument('-compute_flow_and_disp', help='compute flow and disp using netdef', dest='compute_flow_and_disp',
-                        type=bool, default=False)
+                        type=bool, default=True)
     parser.add_argument('-compute_poses', help='compute poses using ORB-SLAM', dest='compute_poses',
-                        type=bool, default=False)
+                        type=bool, default=True)
     # parser.add_argument('-compute_skymask', help='compute semsec for cutting sky using DeepLabv3', dest='compute_skymask',
     #                     type=bool, default=False)
     parser.add_argument('-compute_point_imgs', help='compute 3 channel point images using camera parameters',
                         dest='compute_point_imgs',
-                        type=bool, default=False)
+                        type=bool, default=True)
     # parser.add_argument('-compute_sceneflow', help='computation of scene flow', dest='compute_sceneflow',
     #                     type=bool, default=False)
     # parser.add_argument('-compute_pointclouds', help='computation of pointcloud', dest='compute_pointclouds',
