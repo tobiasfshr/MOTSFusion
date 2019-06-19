@@ -1,0 +1,80 @@
+{
+    "detections_savedir": "./data/out/detections_segmentations_trackrcnn/",
+    "segmentations_savedir": "./data/out/detections_segmentations_trackrcnn/",
+	"orb_pose_savedir": "./data/out/poses_orbslam/",
+	"disp_savedir": "./data/out/flow_disp_netdef/",
+	"flow_savedir": "./data/out/flow_disp_netdef/",
+	"skymask_savedir": "./data/out/sky_masks/",
+	"point_imgs_savedir": "./data/out/point_imgs/",
+	"pointcloud_savedir": "./data/out/pointclouds/",
+
+	"data_dir": "./data/KITTI_tracking/train/",
+
+	"2D_tracking_result_savedir": "./data/out/2D_tracking_result_trackrcnn/",
+	"3D_tracking_result_savedir": "./data/out/3D_tracking_result_trackrcnn/",
+
+    "detector_modeldir": "",
+    "segmentor_modelpath": "./external/BB2SegNet/refinement_net/configs/live",
+	"orbslam_modeldir": "./external/ORB_SLAM2/Examples/Stereo/",
+	"netdef_disp_modeldir": "./external/netdef_models/DispNet3/CSS-ft-kitti/",
+	"netdef_flow_modeldir": "./external/netdef_models/FlowNet3/CSS-ft-kitti/",
+	"deeplab_modeldir": "./external/DeepLabv3/",
+
+	"orbslam_vocab_dir": "./external/ORB_SLAM2/Vocabulary/ORBvoc.txt",
+
+	# mots eval
+	"mots_gt_folder": "./data/mots_gt/",
+	"mots_seqmap_file": "./eval/mots_eval/val.seqmap",
+
+	"2d_mots_vis_output_folder": "./data/trackrcnn_vis/2d_mots_vis/",
+	"3d_mots_vis_output_folder": "./data/trackrcnn_vis/3d_mots_vis/",
+
+	"ignore_region_thresh": 9999,  # threshold for the ignore regions in the ground truth
+	"invalid_depth_lower_thresh": 0,  # threshold for filtering out depth values
+	"invalid_depth_upper_thresh": 40,
+
+    "use_depth": "DispNet",  # either dispnet or [no other implemented]
+	"use_pose": "orbslam",  # either orbslam or [no other implemented]
+	"use_detections": "TrackRCNN",  # either RRC or TrackRCNN
+	"use_flow": "FlowNet",  # either FlowNet or PWCNet
+	"use_segmentations": "TrackRCNN",  # either BB2SegNet or TrackRCNN
+
+	"class_names": ["Car", "Pedestrian"],
+	"classes_to_track": [1, 2],
+
+	# average 3D bbox dimensions for KITTI (Car class)
+	"car_avg_h": 1.5261,
+	"car_avg_w": 1.6286,
+	"car_avg_l": 3.8840,
+
+	# average pedestrian dimensions
+	"pedestrian_avg_h": 1.8,
+	"pedestrian_avg_w": 1.0,
+	"pedestrian_avg_l": 1.0,
+
+	# 2d tracker hyperparameters
+	"tracker": "hungarian",
+    "detection_confidence_threshold_car": 0.6902117065584301,
+    "detection_confidence_threshold_pedestrian": 0.928924218588491,
+    "mask_iou_weight_car": 1.0,
+    "mask_iou_weight_pedestrian": 1.0,
+    "bbox_iou_weight_car": 0.0,
+    "bbox_iou_weight_pedestrian": 0.0,
+    "bbox_center_weight_car": 0.0,
+    "bbox_center_weight_pedestrian": 0.0,
+    "box_offset": 50.0,
+    "box_scale": 0.02,
+
+    "keep_alive_car": 0,
+    "keep_alive_pedestrian": 0,
+
+    "association_threshold_car": 0.03279533303634019,
+    "association_threshold_pedestrian": 0.016224878671633716,
+
+    # 3d tracking hyperparameters
+    "merging_timesteps": 20,
+    "merge_treshold": 4.0,
+    "residual_thresh": 1.6,
+    "debug": false,
+    "mode": "MOTS"  # run MOT or MOTS task setup
+}

@@ -1,0 +1,59 @@
+{
+#sbatch -c 24 --mem=32G --time=7-00:00:00 --gres=gpu:1080ti:4 --partition=lopri run_now.sh
+#python /home/luiten/vision/youtubevos/refinement_net/main.py /home/luiten/vision/youtubevos/refinement_net/configs/train_together_davis
+
+
+"model": "together_davis",
+
+"model_dir": "/home/luiten/vision/youtubevos/refinement_net/models/initial_weights/",
+"load": "/home/luiten/vision/youtubevos/refinement_net/models/initial_weights/ytvos/ytvos-00000100",
+
+"task": "train_no_val",
+"dataset": "davis_lucid",
+
+"gpus": 4,
+"batch_size": 32,
+
+#"gpus": 8,
+#"batch_size": 64,
+
+#"gpus": 1,
+#"batch_size": 8,
+
+# One real epoch is 918,112, we do 50 * 1/10 epochs.
+# In reality we want to 5 real epochs = 50 here epochs = approx 11 hours
+"num_epochs": 50,
+"epoch_length_train": 91812,
+
+# LR seems to work best without decreasing
+"learning_rates": "{1: 0.00001}",
+
+# Idea behind lr schedule (decrease every real epoch to 3 levels accuracy)
+#"learning_rates": "{1: 0.00001,11: 0.000005,21: 0.000001,31: 0.0000005,41: 0.0000001}",
+#"learning_rates": "{1: 0.00001}",
+#"learning_rates": "{1: 0.000001}",
+#"learning_rates": "{1: 0.0000001}",
+
+
+"log_dir": "refinement_net/logs/",
+
+"batch_size_eval": 1,
+"log_verbosity": 5,
+"optimizer": "adam",
+"min_size": 100,
+"freeze_batchnorm": true,
+"save": true,
+
+"resize_mode_train": "bbox_crop_and_resize_fixed_size",
+"augmentors_train": ["gamma", "flip", "bbox_jitter"],
+"bbox_jitter_factor": 0.05,
+"input_size_train": [385, 385],
+"resize_mode_val": "bbox_crop_and_resize_fixed_size",
+"use_bbox_guidance": true,
+
+"network": {
+  "deeplab": {"class": "DeepLabV3Plus", "n_features": 2},
+  "output": {"class": "SegmentationSoftmax", "loss": "bootstrapped_ce", "fraction": 0.25, "resize_logits": true,
+             "from": ["deeplab"]}
+}
+}

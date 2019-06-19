@@ -1,0 +1,31 @@
+{
+"model": "val/india",
+
+"model_dir": "/home/luiten/vision/PReMVOS/refinement_finetuning/",
+
+"task": "davis_iterative_few_shot_segmentation",
+"dataset": "jono_davis_fewshot",
+"gpus": 1,
+"batch_size": 1,
+"batch_size_eval": 1,
+"log_verbosity": 5,
+"optimizer": "adam",
+"min_size": 100,
+"learning_rates": "{1: 0.00001}",
+"freeze_batchnorm": true,
+"save": true,
+"num_epochs": 5,
+
+"resize_mode_train": "bbox_crop_and_resize_fixed_size",
+"augmentors_train": ["gamma", "flip", "bbox_jitter"],
+"bbox_jitter_factor": 0.05,
+"input_size_train": [385, 385],
+"resize_mode_val": "bbox_crop_and_resize_fixed_size",
+"use_bbox_guidance": true,
+
+"network": {
+  "deeplab": {"class": "DeepLabV3Plus", "n_features": 2},
+  "output": {"class": "SegmentationSoftmax", "loss": "bootstrapped_ce", "fraction": 0.25, "resize_logits": true,
+             "from": ["deeplab"]}
+}
+}
