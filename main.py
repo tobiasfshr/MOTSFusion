@@ -72,12 +72,6 @@ if __name__ == '__main__':
         time_dyn += toc - tic
         print('  done.')
 
-        # ### TEMP LOAD ###
-        export_tracking_result(tracked_sequence, config.dir('2D_tracking_result_savedir') + sequence + '/', full=True)
-
-        #tracked_sequence = import_tracking_result(config.dir('2D_tracking_result_savedir') + sequence + '/')
-        ################
-
         # merge tracks
         print('  Merge tracks...')
         tic = time.time()
