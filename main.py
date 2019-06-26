@@ -10,9 +10,9 @@ from utils.calibration_params import CalibrationParameters
 from tracker.create_dynamic_transforms import create_dynamic_transforms
 from tracker.reconstruction_tracking import merge_tracks, extrapolate_final_tracks
 from external.BB2SegNet.segment import refinement_net_init
+from visualization.visualize import visualize_sequence_3D
 import argparse
 import time
-from visualization.visualize import visualize_sequence_3D
 
 
 if __name__ == '__main__':
@@ -99,7 +99,9 @@ if __name__ == '__main__':
 
         # visualize 3D tracking result
         if config.bool('debug'):
-            visualize_sequence_3D(config, tracked_sequence, sequence)
+            print('  Visualize sequence reconstruction in Point Cloud...')
+            visualize_sequence_3D(config, tracked_sequence, point_imgs, raw_imgs)
+            print('  done.')
 
     print('time_2d', time_2d)
     print('time_dyn', time_dyn)
@@ -124,7 +126,7 @@ if __name__ == '__main__':
             run_mot_eval(config.dir('3D_tracking_result_savedir'), list_sequences, eval_modified=True)
 
     #visualize
-    if config.str('mode') == 'MOTS' or 'test' in args.config:
+    if config.str('mode') == 'MOTS':
         print('Visualizing results (3D)...')
         visualize_sequences(list_sequences, config.dir('3D_tracking_result_savedir'), config.dir('data_dir') + 'images/',
                             config.dir('3d_mots_vis_output_folder'), config.str('mots_seqmap_file'), draw_boxes=False,

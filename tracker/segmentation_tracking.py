@@ -17,9 +17,7 @@ TrackElement = namedtuple("TrackElement", ["track_id", "step"])
 def create_tracklets(config, detections_raw, masks_raw, flow):
     # perform tracking per class and in the end combine the results
     classes = config.int_list('classes_to_track')
-    tracker_options_class = {"tracker": config.str("tracker"),
-                             "box_offset": config.float("box_offset"),
-                             "box_scale": config.float("box_scale")}
+    tracker_options_class = {"tracker": config.str("tracker")}
 
     if flow is None:
         assert False, "optical flow did not load correctly"
@@ -36,19 +34,11 @@ def create_tracklets(config, detections_raw, masks_raw, flow):
         if class_ == 1:
             tracker_options_class["detection_confidence_threshold"] = config.float(
                 "detection_confidence_threshold_car")
-            tracker_options_class["mask_iou_weight"] = config.float("mask_iou_weight_car")
-            tracker_options_class["bbox_iou_weight"] = config.float("bbox_iou_weight_car")
-            tracker_options_class["bbox_center_weight"] = config.float("bbox_center_weight_car")
             tracker_options_class["association_threshold"] = config.float("association_threshold_car")
-            tracker_options_class["keep_alive"] = config.int("keep_alive_car")
         elif class_ == 2:
             tracker_options_class["detection_confidence_threshold"] = config.float(
                 "detection_confidence_threshold_pedestrian")
-            tracker_options_class["mask_iou_weight"] = config.float("mask_iou_weight_pedestrian")
-            tracker_options_class["bbox_iou_weight"] = config.float("bbox_iou_weight_pedestrian")
-            tracker_options_class["bbox_center_weight"] = config.float("bbox_center_weight_pedestrian")
             tracker_options_class["association_threshold"] = config.float("association_threshold_pedestrian")
-            tracker_options_class["keep_alive"] = config.int("keep_alive_pedestrian")
         else:
             assert False, "unknown class"
 
@@ -82,28 +72,11 @@ def tracker_per_class(tracks, tracker_options, detections_raw, masks_raw, class_
         elif len(detections_t) != 0:
 
             association_similarities = np.zeros((len(detections_t), len(active_tracks)))
-            if tracker_options["mask_iou_weight"] != 0:
-                masks_t = [v[1] for v in detections_t]
-                masks_tm1 = [tracks.get_mask(t-1, v.track_id, decode=False) for v in active_tracks]
-                masks_tm1_warped = [warp_flow(mask, flow_tm1_t) for mask in masks_tm1]
-                mask_ious = cocomask.iou(masks_t, masks_tm1_warped, [False] * len(masks_tm1_warped))
-                association_similarities += tracker_options["mask_iou_weight"] * mask_ious
-
-            if tracker_options["bbox_center_weight"] != 0:
-                centers_t = [v[0][0:2] + (v[0][2:4] - v[0][0:2]) / 2 for v in detections_t]
-                centers_tm1 = [v.box[0:2] + (v.box[2:4] - v.box[0:2]) / 2 for v in active_tracks]
-                box_dists = cdist(np.array(centers_t), np.array(centers_tm1), "euclidean")
-                box_similarities = tracker_options["box_scale"] * \
-                                   (tracker_options["box_offset"] - box_dists)
-                association_similarities += tracker_options["bbox_center_weight"] * box_similarities
-
-            if tracker_options["bbox_iou_weight"] != 0:
-                bboxes_t = [v[0] for v in detections_t]
-                bboxes_tm1 = [v.box for v in active_tracks]
-                bboxes_tm1_warped = [warp_box(box, flow_tm1_t) for box in bboxes_tm1]
-                bbox_ious = np.array([[bbox_iou(box1, box2) for box1 in bboxes_tm1_warped] for box2 in bboxes_t])
-                assert (0 <= bbox_ious).all() and (bbox_ious <= 1).all()
-                association_similarities += tracker_options["bbox_iou_weight"] * bbox_ious
+            masks_t = [v[1] for v in detections_t]
+            masks_tm1 = [tracks.get_mask(t-1, v.track_id, decode=False) for v in active_tracks]
+            masks_tm1_warped = [warp_flow(mask, flow_tm1_t) for mask in masks_tm1]
+            mask_ious = cocomask.iou(masks_t, masks_tm1_warped, [False] * len(masks_tm1_warped))
+            association_similarities += mask_ious
 
             # for mask_new, mask_warped in zip(masks_t, masks_tm1_warped):
             #     print('warped mask')
@@ -164,7 +137,7 @@ def tracker_per_class(tracks, tracker_options, detections_raw, masks_raw, class_
         # print('written to memory', tracks.get_active_tracks(t))
         # print('--------')
 
-        active_tracks = [track for track in active_tracks if track.step >= t - tracker_options["keep_alive"]]
+        active_tracks = [track for track in active_tracks if track.step >= t]
 
     return tracks
 

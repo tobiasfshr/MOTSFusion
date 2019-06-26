@@ -9,10 +9,9 @@ from sklearn.neighbors import LocalOutlierFactor
 from imblearn.under_sampling import ClusterCentroids
 import warnings
 warnings.filterwarnings("ignore", category=FutureWarning)
-from utils.reconstruction_utils import warp_points, get_position_covariance, get_points_from_masks, get_dynamic_transform, get_weights, get_center_point
+from utils.reconstruction_utils import warp_points, get_position_covariance, get_points_from_masks, get_dynamic_transform, get_center_point
 from visualization.visualize import visualize
 np.random.seed(42)
-np.seterr(divide='ignore', invalid='ignore')
 
 
 def remove_outliers(object_points):
@@ -99,8 +98,6 @@ def create_dynamic_transforms(config, tracks, flow, point_imgs, raw_imgs, calibr
                     # colors_vis = np.concatenate((colors[:, 0], np.tile([255, 255, 0], (len(points_processed), 1))), axis=0)
                     #
                     # visualize(points_vis, colors_vis)
-
-                    #weights_processed = get_weights(points_processed[:, 0], calibration_params)
 
                     if not tracks.is_active(step-1, id):
                         tracks.set_attribute(step, id, 'position_covariances', get_position_covariance(points_processed[:, 0], calibration_params))

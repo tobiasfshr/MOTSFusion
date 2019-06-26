@@ -32,14 +32,6 @@ def get_points_from_masks(mask_t0, mask_t1, point_img_t0, point_img_t1, flow_t1_
     return object_points, colors
 
 
-def get_weights(points, calibration_params):
-    weights = []
-    for point in points:
-        weights.append(compute_uncertainty(point, calibration_params))
-
-    return np.asarray(weights)
-
-
 def get_overlapping_box(boxes, ref_box, iou_thresh=0.5):
     ious = []
     for box in boxes:
@@ -92,8 +84,6 @@ def get_dynamic_transform(points):
     def func(pose):
         trans_mat = pose_vec2mat(pose)
         r = np.asarray(B @ trans_mat.T)[:, 0:2] - A
-        # r = np.multiply(r, weights[:, np.newaxis])
-        # return np.log(np.linalg.norm(r, 1))
         return np.linalg.norm(r, 2)
 
     result = scipy.optimize.minimize(func, np.asarray(init))

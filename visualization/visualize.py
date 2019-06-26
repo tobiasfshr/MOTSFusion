@@ -8,6 +8,7 @@ import pycocotools.mask as cm
 import matplotlib.pyplot as plt
 import matplotlib.patches as patches
 from visualization.visualize_mots import apply_mask
+from skimage.transform import rescale
 
 
 def visualize(points, colors=None):
@@ -59,16 +60,20 @@ def show_detection(img, detection):
     plt.show()
 
 
-def visualize_sequence_3D(config, tracks, sequence, ids=None):
+def visualize_sequence_3D(config, tracks, point_imgs, raw_imgs, ids=None):
     global_scene_visualization = {'points': [],
                                   'colors': []}
     colors = generate_colors()
-    save_path = config.dir('pointcloud_savedir') + sequence + '/'
 
     for step in range(tracks.timesteps):
+        if step % 2 == 0 or step == 0:
+            point_img = rescale(point_imgs[step], 1 / 4, anti_aliasing=False)
+            raw_img = rescale(raw_imgs[step], 1 / 4, anti_aliasing=True, preserve_range=True).astype(np.float)
+            shape = (point_img.shape[0] * point_img.shape[1], point_img.shape[2])
+            global_scene_visualization['points'].extend(point_img.reshape(shape))
+            global_scene_visualization['colors'].extend(raw_img.reshape(shape))
 
         for ref_id in tracks.get_active_tracks(step):
-
             if ids is not None:
                 if not ref_id in ids:
                     continue
@@ -82,17 +87,11 @@ def visualize_sequence_3D(config, tracks, sequence, ids=None):
                 color = np.asarray(colors[ref_id % len(colors)]) * 255
                 global_scene_visualization['colors'].extend(np.tile(color, (1208, 1)))
 
-            global_scene_visualization['points'].extend(tracks.get_attribute(step, ref_id, 'global_points'))
-            global_scene_visualization['colors'].extend(tracks.get_attribute(step, ref_id, 'global_colors'))
-
-    if os.path.exists(save_path + 'all_coords.csv'):
-        all_coords = pandas.read_csv(save_path + 'all_coords.csv').to_records().tolist()
-        all_coords = np.asarray(all_coords)[:, 1:]
-        all_colors = pandas.read_csv(save_path + 'all_colors.csv').to_records().tolist()
-        all_colors = np.asarray(all_colors)[:, 1:]
-
-        global_scene_visualization['points'].extend(all_coords)
-        global_scene_visualization['colors'].extend(all_colors)
+    global_scene_visualization['points'] = np.asarray(global_scene_visualization['points'])
+    global_scene_visualization['colors'] = np.asarray(global_scene_visualization['colors'])
+    height_mask = np.where(global_scene_visualization['points'][:, 1] >= -2.5)
+    global_scene_visualization['points'] = global_scene_visualization['points'][height_mask]
+    global_scene_visualization['colors'] = global_scene_visualization['colors'][height_mask]
 
     visualize(global_scene_visualization['points'], global_scene_visualization['colors'])
 
