@@ -2,7 +2,7 @@
 
 ### Introduction
 
-This repository contains the corresponding source code for the paper "MOTSFusion: Multi-Object Tracking, Segmentation and Dynamic Reconstruction in 3D" submitted to ICCV 2019 [arXiv PrePrint coming soon].
+This repository contains the corresponding source code for the paper "MOTSFusion: Multi-Object Tracking, Segmentation and Dynamic Reconstruction in 3D" [arXiv PrePrint coming soon].
 
 ### Requirements
 The code was tested on:
