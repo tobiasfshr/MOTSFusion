@@ -15,6 +15,9 @@ def load_txt(path):
             line = line.strip()
             fields = line.split(" ")
 
+            if int(fields[1]) == -1:
+                continue
+
             frame = int(fields[0])
             if frame not in objects_per_frame:
                 objects_per_frame[frame] = []

@@ -64,14 +64,14 @@ def visualize_sequence_3D(config, tracks, point_imgs, raw_imgs, ids=None):
     global_scene_visualization = {'points': [],
                                   'colors': []}
     colors = generate_colors()
-
-    for step in range(tracks.timesteps):
+    for step in range(len(raw_imgs)):
         if step % 2 == 0 or step == 0:
             point_img = rescale(point_imgs[step], 1 / 4, anti_aliasing=False)
             raw_img = rescale(raw_imgs[step], 1 / 4, anti_aliasing=True, preserve_range=True).astype(np.float)
             shape = (point_img.shape[0] * point_img.shape[1], point_img.shape[2])
-            global_scene_visualization['points'].extend(point_img.reshape(shape))
-            global_scene_visualization['colors'].extend(raw_img.reshape(shape))
+            height_mask = np.where(point_img.reshape(shape)[:, 1] >= -2.5)
+            global_scene_visualization['points'].extend(point_img.reshape(shape)[height_mask])
+            global_scene_visualization['colors'].extend(raw_img.reshape(shape)[height_mask])
 
         for ref_id in tracks.get_active_tracks(step):
             if ids is not None:
@@ -89,9 +89,6 @@ def visualize_sequence_3D(config, tracks, point_imgs, raw_imgs, ids=None):
 
     global_scene_visualization['points'] = np.asarray(global_scene_visualization['points'])
     global_scene_visualization['colors'] = np.asarray(global_scene_visualization['colors'])
-    height_mask = np.where(global_scene_visualization['points'][:, 1] >= -2.5)
-    global_scene_visualization['points'] = global_scene_visualization['points'][height_mask]
-    global_scene_visualization['colors'] = global_scene_visualization['colors'][height_mask]
 
     visualize(global_scene_visualization['points'], global_scene_visualization['colors'])
 

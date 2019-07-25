@@ -81,6 +81,7 @@ def create_dynamic_transforms(config, tracks, flow, point_imgs, raw_imgs, calibr
         tracks.add_new_attribute('global_pointclouds')
         tracks.add_new_attribute('global_colors')
         tracks.add_new_attribute('global_3D_bbox')
+        tracks.add_new_attribute('global_points_unprocessed')
 
     for step in range(tracks.timesteps-1):
         for id in tracks.get_active_tracks(step):
@@ -107,19 +108,21 @@ def create_dynamic_transforms(config, tracks, flow, point_imgs, raw_imgs, calibr
                         if config.bool('debug'):
                             tracks.set_attribute(step, id, 'global_3D_bbox', get_center_point(config, points_processed[:, 0], tracks.get_detection(step, id)['class']))
                             tracks.set_attribute(step, id, 'global_pointclouds', points[:, 0])
+                            tracks.set_attribute(step, id, 'global_points_unprocessed', points[:, 0])
                             tracks.set_attribute(step, id, 'global_colors', colors[:, 0])
 
-                    dynamic_transforms, transform_covariance = get_dynamic_transform(points_processed)
+                    dynamic_transform, transform_covariance = get_dynamic_transform(points_processed)
 
-                    tracks.set_attribute(step + 1, id, 'dynamic_transforms', dynamic_transforms)
+                    tracks.set_attribute(step + 1, id, 'dynamic_transforms', dynamic_transform)
                     tracks.set_attribute(step + 1, id, 'transform_covariances', transform_covariance)
                     tracks.set_attribute(step + 1, id, 'global_positions', np.mean(points_processed[:, 1], axis=0))
                     tracks.set_attribute(step + 1, id, 'position_covariances', get_position_covariance(points_processed[:, 1], calibration_params))
                     tracks.set_attribute(step + 1, id, 'global_points', points_processed[:, 1])
 
                     if config.bool('debug'):
-                        tracks.set_attribute(step, id, 'global_3D_bbox', get_center_point(config, points_processed[:, 1], tracks.get_detection(step, id)['class']))
+                        tracks.set_attribute(step + 1, id, 'global_3D_bbox', get_center_point(config, points_processed[:, 1], tracks.get_detection(step, id)['class'], points_processed[:, 0]))
                         tracks.set_attribute(step + 1, id, 'global_pointclouds', warp_points(tracks.get_track_attribute(id, 'dynamic_transforms'), id, points_processed[:, 1]))
+                        tracks.set_attribute(step + 1, id, 'global_points_unprocessed', points[:, 1])
                         tracks.set_attribute(step + 1, id, 'global_colors', colors[:, 1])
                 else:
                     points = np.concatenate((np.expand_dims(point_imgs[step+1][mask_t1.astype(np.bool)], axis=1), np.expand_dims(point_imgs[step+1][mask_t1.astype(np.bool)], axis=1)), axis=1)
@@ -134,6 +137,7 @@ def create_dynamic_transforms(config, tracks, flow, point_imgs, raw_imgs, calibr
                         if config.bool('debug'):
                             tracks.set_attribute(step, id, 'global_3D_bbox', get_center_point(config, points_processed[:, 0], tracks.get_detection(step, id)['class']))
                             tracks.set_attribute(step, id, 'global_pointclouds', points[:, 0])
+                            tracks.set_attribute(step, id, 'global_points_unprocessed', points[:, 0])
                             tracks.set_attribute(step, id, 'global_colors', colors[:, 0])
 
                     dynamic_transform = np.asarray([0, 0, 0])
@@ -146,8 +150,9 @@ def create_dynamic_transforms(config, tracks, flow, point_imgs, raw_imgs, calibr
                     tracks.set_attribute(step + 1, id, 'global_points', points_processed[:, 1])
 
                     if config.bool('debug'):
-                        tracks.set_attribute(step, id, 'global_3D_bbox', get_center_point(config, points_processed[:, 1], tracks.get_detection(step, id)['class']))
+                        tracks.set_attribute(step + 1, id, 'global_3D_bbox', get_center_point(config, points_processed[:, 1], tracks.get_detection(step, id)['class'], points_processed[:, 0]))
                         tracks.set_attribute(step + 1, id, 'global_pointclouds', points[:, 1])
+                        tracks.set_attribute(step + 1, id, 'global_points_unprocessed', points[:, 1])
                         tracks.set_attribute(step + 1, id, 'global_colors', colors[:, 1])
             else:
                 if not tracks.is_active(step - 1, id):
@@ -166,6 +171,7 @@ def create_dynamic_transforms(config, tracks, flow, point_imgs, raw_imgs, calibr
                     if config.bool('debug'):
                         tracks.set_attribute(step, id, 'global_3D_bbox', get_center_point(config, points_processed[:, 0], tracks.get_detection(step, id)['class']))
                         tracks.set_attribute(step, id, 'global_pointclouds', points)
+                        tracks.set_attribute(step, id, 'global_points_unprocessed', points)
                         tracks.set_attribute(step, id, 'global_colors', colors)
 
     return tracks

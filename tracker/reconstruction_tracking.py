@@ -159,13 +159,14 @@ def track_consistency(config, tracks, reference_track, track_proposals, start_st
                 depth_covariance_ref = get_depth_covariance(point_ref, pose_list[start_step + num_timesteps], calibration_params)
                 depth_covariance_proposal = get_depth_covariance(point_proposal, pose_list[current_step - num_timesteps], calibration_params)
 
-                # print('depth_covariance_ref', depth_covariance_ref)
-                # print("depth_covariance_proposal", depth_covariance_proposal)
+                if config.bool('debug'):
+                    print('depth_covariance_ref', depth_covariance_ref)
+                    print("depth_covariance_proposal", depth_covariance_proposal)
 
-                # print('avg_transform_ref', avg_transform_ref)
-                # print('avg_transform_proposal', avg_transform_proposal)
-                # avg_transform = ((avg_transform_ref + avg_transform_proposal) / 2)
-                # print('avg_transform', avg_transform)
+                    print('avg_transform_ref', avg_transform_ref)
+                    print('avg_transform_proposal', avg_transform_proposal)
+                    avg_transform = ((avg_transform_ref + avg_transform_proposal) / 2)
+                    print('avg_transform', avg_transform)
 
                 diff[0] = diff[0] / np.log(depth_covariance_ref[0][0] + depth_covariance_proposal[0][0] + np.e) #/ np.log(np.abs(avg_transform[0]) + 2)
                 diff[1] = diff[1] / np.log(depth_covariance_ref[2][2] + depth_covariance_proposal[2][2] + np.e) #/ np.log(np.abs(avg_transform[1]) + 2)
@@ -256,7 +257,7 @@ def fill_merged_track(config, tracks, fill_bbox_params, start_step, current_step
         if config.bool('debug'):
             print('point_box_distance', point_box_distance)
 
-        if point_box_distance < np.minimum(3, 1.8 * avg_point_box_distance):
+        if point_box_distance < np.minimum(4, 1.8 * avg_point_box_distance):
             detection = {}
             detection['bbox'] = [x1, y1, x2, y2]
             detection['score'] = 1.0
@@ -265,7 +266,9 @@ def fill_merged_track(config, tracks, fill_bbox_params, start_step, current_step
             mask = segment([detection], img_list[start_step + index + 1], refinement_net)[0]
             tracks.add_to_track(start_step + index + 1, reference_id, detection, mask)
             if config.bool('debug'):
-                tracks.set_attribute(start_step + index + 1, reference_id, 'global_3D_bbox', (np.asarray(bboxes_ref[index]) + np.asarray(bboxes_proposal[index])) / 2)
+                avg_box = (np.asarray(bboxes_ref[index]) + np.asarray(bboxes_proposal[index]))
+                avg_box[3] = np.arctan((np.sin(bboxes_ref[index][3]) + np.sin(bboxes_proposal[index][3])) / (np.cos(bboxes_ref[index][3]) + np.cos(bboxes_proposal[index][3])))
+                tracks.set_attribute(start_step + index + 1, reference_id, 'global_3D_bbox', avg_box)
 
 
 def extrapolate_terminated_track(config, tracks, flow_list, pose_list, point_img_list, calibration_params, img_list, refinement_net, start_step, reference_id, inverse=False):

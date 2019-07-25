@@ -185,47 +185,41 @@ def get_bbox_points(config, bbox_params, object_class=1):
     return bbox_points
 
 
-def get_center_point(config, points, object_class):
-    if object_class == 1:
-        half_w = config.float('car_avg_w') / 2
-        half_h = config.float('car_avg_h') / 2
-        half_l = config.float('car_avg_l') / 2
-    else:
-        half_w = config.float('pedestrian_avg_w') / 2
-        half_h = config.float('pedestrian_avg_h') / 2
-        half_l = config.float('pedestrian_avg_l') / 2
+def get_center_point(config, points, object_class, past_points=None):
+    # if object_class == 1:
+    #     half_w = config.float('car_avg_w') / 2
+    #     half_h = config.float('car_avg_h') / 2
+    #     half_l = config.float('car_avg_l') / 2
+    # else:
+    #     half_w = config.float('pedestrian_avg_w') / 2
+    #     half_h = config.float('pedestrian_avg_h') / 2
+    #     half_l = config.float('pedestrian_avg_l') / 2
 
     points = np.asarray(points)
-    x_mean,y_mean,z_mean = np.median(points, axis=0)
-    theta_best, max_inliers = 0, 0
+    x_mean, y_mean, z_mean = np.median(points, axis=0)
+    theta_best = 0
 
-    def compute_inliers(theta):
-        inliers = 0
-        center = np.array([x_mean,z_mean])
-        ps = np.column_stack((points[:, 0], points[:, 2]))
-        shifted_points = ps - center
-        aligned_points = shifted_points @ np.asarray(
-            [[np.cos(theta), -np.sin(theta)], [np.sin(theta), np.cos(theta)]]).T
-        for point in aligned_points:
-            if (point[0] < half_w and point[0] > -half_w) and (point[1] < half_l and point[1] > -half_l):
-                inliers += 1
-        # print('inliers', inliers)
-        return inliers
+    if past_points is not None:
+        current = np.median(points, axis=0)
+        past = np.median(past_points, axis=0)
+        if np.linalg.norm(current - past, 2) > 0.7:
+            dy = current[2] - past[2]
+            dx = current[0] - past[0]
+            theta_best = np.arctan(dy / dx)
 
-    for theta in range(0, 180, 8):
-        theta = np.deg2rad(theta)
-        # compute bbox inliers
-        num_inliers = compute_inliers(theta)
+    if theta_best == 0:
+        ps = points
+        ps = np.column_stack((ps[:, 0], ps[:, 2]))
 
-        if num_inliers > max_inliers:
-            max_inliers = num_inliers
-            theta_best = theta
+        from sklearn.decomposition.pca import PCA
 
-    # from utils.visualization_utils import get_bbox_points_dense
-    # from visualization.visualize import visualize
-    # points = points.tolist()
-    # points.extend(get_bbox_points_dense(config, np.array((x_mean,y_mean,z_mean,theta_best)), object_class))
-    # visualize(points)
+        pca = PCA(n_components=2)
+        pca.fit(ps)
+
+        theta_best = np.arctan(pca.components_[0][1] / pca.components_[0][0])
+
+    theta_best = theta_best + np.pi / 2
+
     return np.array((x_mean,y_mean,z_mean,theta_best))
 
 
