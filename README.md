@@ -1,8 +1,8 @@
-## MOTSFusion: Multi-Object Tracking, Segmentation and Dynamic Reconstruction in 3D
+## MOTSFusion: Track to Reconstruct and Reconstruct to Track
 
 ### Introduction
 
-This repository contains the corresponding source code for the paper "MOTSFusion: Multi-Object Tracking, Segmentation and Dynamic Reconstruction in 3D" [arXiv PrePrint coming soon].
+This repository contains the corresponding source code for the paper "Track to Reconstruct and Reconstruct to Track" [arXiv PrePrint](http://arxiv.org/abs/1910.00130).
 
 ### Requirements
 The code was tested on:
@@ -33,7 +33,13 @@ After the tracker has completed all sequences, results will be evaluated automat
 - MOT dataset: http://www.cvlibs.net/datasets/kitti/eval_tracking.php
 
 ### Citation
-Coming soon.
-
+```
+@article{luiten2019track,
+  title={Track to Reconstruct and Reconstruct to Track},
+  author={Luiten, Jonathon and Fischer, Tobias and Leibe, Bastian},
+  journal={arXiv:1910.00130},
+  year={2019}
+}
+```
 ### License
 MIT License
