@@ -1,4 +1,5 @@
 ## MOTSFusion: Track to Reconstruct and Reconstruct to Track
+![Method Overview](https://github.com/tobiasfshr/MOTSFusion/blob/master/imgs/overview.png)
 
 ### Introduction
 
