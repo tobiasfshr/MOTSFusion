@@ -30,7 +30,7 @@ After the tracker has completed all sequences, results will be evaluated automat
 ### Results
 We release our results on the MOTS [test set](https://drive.google.com/open?id=1v6AIJ2qRkHKLTnR7Sma3QA3Be6VcQJ2U)
 
-As well as the detections ([test](https://drive.google.com/open?id=1QmArTCHaxS2a9jciGBqA6LAQQ4bcPeKE), [train/val](https://drive.google.com/open?id=14YLMwTDi2gpUVOSgDiNxMLrTgvX_Nb6Q)) and segmentations([test]https://drive.google.com/open?id=194Yj_L9_cc5Yio-Khk6DGFOUQ6RS7PvV), [train/val](https://drive.google.com/open?id=1Rb63G4j6lap2Zk4zKOlYX_YJozAdduPD)).
+As well as the detections ([test](https://drive.google.com/open?id=1QmArTCHaxS2a9jciGBqA6LAQQ4bcPeKE), [train/val](https://drive.google.com/open?id=14YLMwTDi2gpUVOSgDiNxMLrTgvX_Nb6Q)) and segmentations([test](https://drive.google.com/open?id=194Yj_L9_cc5Yio-Khk6DGFOUQ6RS7PvV), [train/val](https://drive.google.com/open?id=1Rb63G4j6lap2Zk4zKOlYX_YJozAdduPD)).
 
 ### References
 - RRC Detections: https://github.com/JunaidCS032/MOTBeyondPixels - can be downloaded along with other features in section 'Running the demo script'
