@@ -1,12 +1,12 @@
 ## MOTSFusion: Track to Reconstruct and Reconstruct to Track
 ![Method Overview](https://github.com/tobiasfshr/MOTSFusion/blob/master/imgs/overview.png)
 
-## News
-!This paper has been accepted as both a conference paper at ICRA 2020, as well as being accepted as a journal paper in Robotics and Automation Letters (RA-L)!!!
-
 ### Introduction
 
 This repository contains the corresponding source code for the paper "Track to Reconstruct and Reconstruct to Track" [arXiv PrePrint](http://arxiv.org/abs/1910.00130).
+
+### News
+This paper has been accepted as both a conference paper at ICRA 2020, as well as being accepted as a journal paper in Robotics and Automation Letters (RA-L)!!!
 
 ### Requirements
 The code was tested on:
