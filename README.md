@@ -31,7 +31,8 @@ python main.py -config ./configs/config_default
 After the tracker has completed all sequences, results will be evaluated automatically.
 
 ### Results
-We release our results on the MOTS [test set](https://drive.google.com/open?id=1v6AIJ2qRkHKLTnR7Sma3QA3Be6VcQJ2U)
+We release our results on the MOTS test set [cars](https://drive.google.com/open?id=1v6AIJ2qRkHKLTnR7Sma3QA3Be6VcQJ2U)
+[pedestrians](https://drive.google.com/file/d/1yqkjqt-0t8zVU7jxwbon2TWyhXXmbMAt/view?usp=sharing)
 
 As well as the detections  and segmentations ([test-RRC](https://drive.google.com/open?id=1QmArTCHaxS2a9jciGBqA6LAQQ4bcPeKE), [test-TRCNN](https://drive.google.com/open?id=14YLMwTDi2gpUVOSgDiNxMLrTgvX_Nb6Q), [train/val-RRC](https://drive.google.com/open?id=194Yj_L9_cc5Yio-Khk6DGFOUQ6RS7PvV), [train/val-TRCNN](https://drive.google.com/open?id=1Rb63G4j6lap2Zk4zKOlYX_YJozAdduPD)).
 
