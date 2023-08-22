@@ -45,11 +45,15 @@ As well as the detections  and segmentations ([test-RRC](https://drive.google.co
 
 ### Citation
 ```
-@article{luiten2019track,
-  title={Track to Reconstruct and Reconstruct to Track},
+@article{luiten2020track,
+  title={Track to reconstruct and reconstruct to track},
   author={Luiten, Jonathon and Fischer, Tobias and Leibe, Bastian},
-  journal={arXiv:1910.00130},
-  year={2019}
+  journal={IEEE Robotics and Automation Letters},
+  volume={5},
+  number={2},
+  pages={1803--1810},
+  year={2020},
+  publisher={IEEE}
 }
 ```
 ### License
